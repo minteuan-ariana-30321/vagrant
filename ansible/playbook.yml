@@ -1,0 +1,10 @@
+- hosts: app
+  become: true
+  roles: 
+    - app
+
+- hosts: db
+  become: true
+  roles: 
+    - db
+

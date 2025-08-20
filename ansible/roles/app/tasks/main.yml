@@ -1,0 +1,72 @@
+- name: Install curl
+  apt:
+    name: curl
+    state: present 
+    update_cache: yes
+
+- name: Add NodeSource APT key
+  shell: curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+
+- name: Install Node.js
+  apt: 
+    name: nodejs
+    state: present
+
+- name: Install Nginx
+  apt: 
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Create Nginx config for Node.js app
+  copy: 
+    dest: /etc/nginx/sites-available/todo-app
+    content: |
+      server {
+          listen 80;
+         
+          location / {
+              proxy_pass http://localhost:3000;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection 'upgrade';
+              proxy_set_header Host $host;
+              proxy_cache_bypass $http_upgrade;
+          }
+       } 
+  notify: Reload nginx
+
+- name: Enable Nginx site
+  file: 
+    src: /etc/nginx/sites-available/todo-app
+    dest: /etc/nginx/sites-enabled/todo-app
+    state: link
+  notify: Reload nginx
+
+- name: Remove default Nginx site
+  file: 
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Ensure Nginx is running and enabled
+  service: 
+    name: nginx
+    state: started
+    enabled: yes
+  
+- name: Copy app files
+  copy: 
+    src: /vagrant/todo-app-main/
+    dest: /home/vagrant/todo-app
+    owner: vagrant
+    group: vagrant
+    mode: 0755
+
+- name: Install npm dependencies
+  npm:
+    path: /home/vagrant/todo-app/
+
+- name: Start the app
+  shell: nohup node /home/vagrant/todo-app/todo.js &
+  args:
+    chdir: /home/vagrant/todo-app/

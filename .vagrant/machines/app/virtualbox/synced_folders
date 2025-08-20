@@ -1,1 +1,1 @@
-{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"C:/Users/Ariana/vagrant","disabled":false,"__vagrantfile":true}}}
+{"virtualbox":{"/vagrant/todo-app-main":{"guestpath":"/vagrant/todo-app-main","hostpath":"C:/Users/Ariana/vagrant/todo-app-main","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"C:/Users/Ariana/vagrant","disabled":false,"__vagrantfile":true}}}
